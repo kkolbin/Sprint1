@@ -1,0 +1,595 @@
+openapi: 3.0.3
+info:
+  title: Pereval API
+  version: 0.0.3
+  description: Документация по API
+paths:
+  /api/submitData/pass/:
+    get:
+      operationId: submitData_pass_list
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          description: Number of results to return per page.
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          description: The initial index from which to return the results.
+      - name: user__email
+        in: query
+        schema:
+          type: string
+      tags:
+      - submitData
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPassList'
+          description: ''
+    post:
+      operationId: submitData_pass_create
+      tags:
+      - submitData
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PassRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PassRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PassRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pass'
+          description: ''
+  /api/submitData/pass/{id}/:
+    get:
+      operationId: submitData_pass_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Перевал.
+        required: true
+      tags:
+      - submitData
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pass'
+          description: ''
+    put:
+      operationId: submitData_pass_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Перевал.
+        required: true
+      tags:
+      - submitData
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PassRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PassRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PassRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pass'
+          description: ''
+    patch:
+      operationId: submitData_pass_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Перевал.
+        required: true
+      tags:
+      - submitData
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPassRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPassRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPassRequest'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pass'
+          description: ''
+    delete:
+      operationId: submitData_pass_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Перевал.
+        required: true
+      tags:
+      - submitData
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/submitData/user__email={email}:
+    get:
+      operationId: submitData_user__email=_list
+      parameters:
+      - in: path
+        name: email
+        schema:
+          type: string
+        required: true
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          description: Number of results to return per page.
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          description: The initial index from which to return the results.
+      tags:
+      - submitData
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPassList'
+          description: ''
+components:
+  schemas:
+    AutumnEnum:
+      type: string
+      enum:
+      - 1a
+      - 1b
+      - 2a
+      - 2b
+      - 3a
+      - 3b
+      - 3b2
+      description: |
+        * `1a` - 1А
+        * `1b` - 1Б
+        * `2a` - 2А
+        * `2b` - 2Б
+        * `3a` - 3А
+        * `3b` - 3Б
+        * `3b2` - 3Б*
+    Coords:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+          title: Широта
+        longitude:
+          type: number
+          format: double
+          title: Долгота
+        height:
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: -2147483648
+          title: Высота
+      required:
+      - height
+      - latitude
+      - longitude
+    CoordsRequest:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+          title: Широта
+        longitude:
+          type: number
+          format: double
+          title: Долгота
+        height:
+          type: integer
+          format: int32
+          maximum: 2147483647
+          minimum: -2147483648
+          title: Высота
+      required:
+      - height
+      - latitude
+      - longitude
+    Levels:
+      type: object
+      properties:
+        spring:
+          allOf:
+          - $ref: '#/components/schemas/SpringEnum'
+          title: Весна
+        summer:
+          allOf:
+          - $ref: '#/components/schemas/SummerEnum'
+          title: Лето
+        autumn:
+          allOf:
+          - $ref: '#/components/schemas/AutumnEnum'
+          title: Осень
+        winter:
+          allOf:
+          - $ref: '#/components/schemas/WinterEnum'
+          title: Зима
+      required:
+      - autumn
+      - spring
+      - summer
+      - winter
+    LevelsRequest:
+      type: object
+      properties:
+        spring:
+          allOf:
+          - $ref: '#/components/schemas/SpringEnum'
+          title: Весна
+        summer:
+          allOf:
+          - $ref: '#/components/schemas/SummerEnum'
+          title: Лето
+        autumn:
+          allOf:
+          - $ref: '#/components/schemas/AutumnEnum'
+          title: Осень
+        winter:
+          allOf:
+          - $ref: '#/components/schemas/WinterEnum'
+          title: Зима
+      required:
+      - autumn
+      - spring
+      - summer
+      - winter
+    PaginatedPassList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pass'
+    Pass:
+      type: object
+      description: Adds nested create feature
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          readOnly: true
+          title: Статус записи
+        user:
+          $ref: '#/components/schemas/Users'
+        date_added:
+          type: string
+          format: date-time
+          readOnly: true
+        coords:
+          $ref: '#/components/schemas/Coords'
+        level:
+          $ref: '#/components/schemas/Levels'
+        beauty_title:
+          type: string
+          title: Тип объекта
+        title:
+          type: string
+          title: Название объекта
+        other_titles:
+          type: string
+          title: Другое название
+        connect:
+          type: string
+          title: Подключение
+        images:
+          $ref: '#/components/schemas/PassImages'
+      required:
+      - beauty_title
+      - connect
+      - coords
+      - date_added
+      - id
+      - images
+      - level
+      - other_titles
+      - status
+      - title
+      - user
+    PassImages:
+      type: object
+      properties:
+        image_id:
+          type: string
+          format: uri
+    PassImagesRequest:
+      type: object
+      properties:
+        image_id:
+          type: string
+          format: binary
+    PassRequest:
+      type: object
+      description: Adds nested create feature
+      properties:
+        user:
+          $ref: '#/components/schemas/UsersRequest'
+        coords:
+          $ref: '#/components/schemas/CoordsRequest'
+        level:
+          $ref: '#/components/schemas/LevelsRequest'
+        beauty_title:
+          type: string
+          minLength: 1
+          title: Тип объекта
+        title:
+          type: string
+          minLength: 1
+          title: Название объекта
+        other_titles:
+          type: string
+          minLength: 1
+          title: Другое название
+        connect:
+          type: string
+          minLength: 1
+          title: Подключение
+        images:
+          $ref: '#/components/schemas/PassImagesRequest'
+      required:
+      - beauty_title
+      - connect
+      - coords
+      - images
+      - level
+      - other_titles
+      - title
+      - user
+    PatchedPassRequest:
+      type: object
+      description: Adds nested create feature
+      properties:
+        user:
+          $ref: '#/components/schemas/UsersRequest'
+        coords:
+          $ref: '#/components/schemas/CoordsRequest'
+        level:
+          $ref: '#/components/schemas/LevelsRequest'
+        beauty_title:
+          type: string
+          minLength: 1
+          title: Тип объекта
+        title:
+          type: string
+          minLength: 1
+          title: Название объекта
+        other_titles:
+          type: string
+          minLength: 1
+          title: Другое название
+        connect:
+          type: string
+          minLength: 1
+          title: Подключение
+        images:
+          $ref: '#/components/schemas/PassImagesRequest'
+    SpringEnum:
+      type: string
+      enum:
+      - 1a
+      - 1b
+      - 2a
+      - 2b
+      - 3a
+      - 3b
+      - 3b2
+      description: |-
+        * `1a` - 1А
+        * `1b` - 1Б
+        * `2a` - 2А
+        * `2b` - 2Б
+        * `3a` - 3А
+        * `3b` - 3Б
+        * `3b2` - 3Б*
+    StatusEnum:
+      type: string
+      enum:
+      - NW
+      - PN
+      - AC
+      - RJ
+      description: |-
+        * `NW` - новый
+        * `PN` - в обработке
+        * `AC` - принят
+        * `RJ` - отклонён
+    SummerEnum:
+      type: string
+      enum:
+      - 1a
+      - 1b
+      - 2a
+      - 2b
+      - 3a
+      - 3b
+      - 3b2
+      description: |-
+        * `1a` - 1А
+        * `1b` - 1Б
+        * `2a` - 2А
+        * `2b` - 2Б
+        * `3a` - 3А
+        * `3b` - 3Б
+        * `3b2` - 3Б*
+    Users:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          title: Электронная почта
+          maxLength: 128
+        fam:
+          type: string
+          title: Фамилия
+          maxLength: 40
+        name:
+          type: string
+          title: Имя
+          maxLength: 40
+        otc:
+          type: string
+          title: Отчество
+          maxLength: 40
+        phone:
+          type: string
+          title: Номер телефона с кодом страны
+          maxLength: 12
+      required:
+      - email
+      - fam
+      - name
+      - phone
+    UsersRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+          title: Электронная почта
+          maxLength: 128
+        fam:
+          type: string
+          minLength: 1
+          title: Фамилия
+          maxLength: 40
+        name:
+          type: string
+          minLength: 1
+          title: Имя
+          maxLength: 40
+        otc:
+          type: string
+          title: Отчество
+          maxLength: 40
+        phone:
+          type: string
+          minLength: 1
+          title: Номер телефона с кодом страны
+          maxLength: 12
+      required:
+      - email
+      - fam
+      - name
+      - phone
+    WinterEnum:
+      type: string
+      enum:
+      - 1a
+      - 1b
+      - 2a
+      - 2b
+      - 3a
+      - 3b
+      - 3b2
+      description: |-
+        * `1a` - 1А
+        * `1b` - 1Б
+        * `2a` - 2А
+        * `2b` - 2Б
+        * `3a` - 3А
+        * `3b` - 3Б
+        * `3b2` - 3Б*
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
