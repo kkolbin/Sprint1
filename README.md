@@ -104,7 +104,7 @@
 
 1. Клонируйте репозиторий:
 
-git clone https://github.com/kkolbin/Pereval.git
+git clone https://github.com/kkolbin/Sprint1.git
 
 
 2. Перейдите в каталог проекта:
