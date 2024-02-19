@@ -37,7 +37,6 @@ class PassViewSet(viewsets.ModelViewSet):
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
     filterset_fields = ('user__email',)
 
-    # Метод для создания новой записи
     def create(self, request, *args, **kwargs):
         serializer = PassSerializer(data=request.data)
         if serializer.is_valid():
@@ -50,7 +49,6 @@ class PassViewSet(viewsets.ModelViewSet):
                 }
             )
         elif status.HTTP_500_INTERNAL_SERVER_ERROR:
-            # В случае ошибки сервера
             return Response(
                 {
                     'status': status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -59,7 +57,6 @@ class PassViewSet(viewsets.ModelViewSet):
                 }
             )
         else:
-            # В случае невалидных данных
             return Response(
                 {
                     'status': status.HTTP_400_BAD_REQUEST,
@@ -68,7 +65,6 @@ class PassViewSet(viewsets.ModelViewSet):
                 }
             )
 
-    # Метод для обновления записи
     def update(self, request, *args, **kwargs):
         pass_instance = self.get_object()
         if pass_instance.status == 'NW':
@@ -85,29 +81,44 @@ class PassViewSet(viewsets.ModelViewSet):
                      }
                 )
             else:
-                # В случае ошибок валидации
                 return Response(
                     {'state': '0',
                      'message': serializer.errors
                      }
                 )
         else:
-            # В случае, если статус не "новый"
             return Response(
                 {'state': '0',
                  'message': f'При статусе: {pass_instance.get_status_display()}, редактирование невозможно.'
                  }
             )
 
+    # Добавление метода GET для получения одной записи по её id
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
-# API view для получения данных по email
+    # Добавление метода PATCH для редактирования записи по её id
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.status == 'NW':
+            serializer = self.get_serializer(instance, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'state': '1', 'message': 'Данные изменены'})
+            else:
+                return Response({'state': '0', 'message': serializer.errors})
+        else:
+            return Response({'state': '0', 'message': f'При статусе: {instance.get_status_display()}, редактирование невозможно.'})
+
+
 class EmailView(generics.ListAPIView):
     serializer_class = PassSerializer
 
     def get(self, request, *args, **kwargs):
         email = kwargs.get('email', None)
         if Pass.objects.filter(user__email=email).exists():
-            # Если пользователь существует
             data = PassSerializer(
                 Pass.objects.filter
                 (
@@ -116,6 +127,6 @@ class EmailView(generics.ListAPIView):
                 many=True
             ).data
         else:
-            # Если пользователя нет
             data = {'message': f'Пользователь с {email} не найден'}
         return JsonResponse(data, safe=False)
+
