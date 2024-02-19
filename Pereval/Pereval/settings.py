@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'drf_spectacular',
-    'drf_spectacular_sidecar',
 ]
 
 MIDDLEWARE = [
@@ -147,9 +146,9 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Pass API",
+    "TITLE": "Pereval API",
     "DESCRIPTION": 'Документация по API',
-    "VERSION": "0.0.3",
+    "VERSION": "0.0.1",
     "SERVE_INCLUDE_SCHEMA": False,
     "SWAGGER_UI_SETTINGS": {
         "filter": True,
